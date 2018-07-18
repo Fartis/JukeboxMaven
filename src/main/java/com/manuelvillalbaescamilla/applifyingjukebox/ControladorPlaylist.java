@@ -5,6 +5,7 @@
  */
 package com.manuelvillalbaescamilla.applifyingjukebox;
 
+import com.manuelvillalbaescamilla.Class.ReproductorMusica;
 import com.manuelvillalbaescamilla.Class.Track;
 import com.manuelvillalbaescamilla.GUI.VistaReproductor;
 import java.io.File;
@@ -32,6 +33,7 @@ public class ControladorPlaylist {
     private static ArrayList<String> urlActualPlaylist = new ArrayList<>();
     private static ControladorPlaylist singleton;
     private static Track actualTrack;
+    private static int indice=-1;
     private static ReproductorMusica player = new ReproductorMusica();
     private static Timer chrono;
     private static VistaReproductor gui;
@@ -46,13 +48,13 @@ public class ControladorPlaylist {
             segundo = getDuration()-(minuto*60);
             int minutoActual = 0, segundoActual = 0;
             try{
-                segundoChrono = player.getActualTime()/1000;
+                segundoChrono = (int)player.getActualTime();
             }catch (Exception e){
                 segundoChrono = 0;
             }
             minutoActual = segundoChrono/60;
             segundoActual = segundoChrono - (minutoActual*60);
-            gui.notificarProceso(minutoActual + ":" + segundoActual + " / " + minuto + ":" + segundo, player.getActualTime()/1000, player.getInfo());
+            gui.notificarProceso(String.format("%02d", minutoActual) + ":" + String.format("%02d",segundoActual) + " / " + String.format("%02d",minuto) + ":" + String.format("%02d",segundo), (int)player.getActualTime(), player.getInfo());
         }
     };
     
@@ -85,13 +87,31 @@ public class ControladorPlaylist {
         return model;
     }
     
+    public DefaultListModel addTracks(File[] files) {
+        
+        for (File file : files){
+            urlActualPlaylist.add(file.getPath());
+            actualPlaylist.add(file);
+        }
+        
+        DefaultListModel model = new DefaultListModel();
+        
+        for (File track : actualPlaylist) {
+            model.addElement(track.getName());
+        }
+            
+        return model;
+        
+    }
+    
     public static void playTrack(int position){
         try{
             player.pararMusica();
         }catch (Exception e){}
         File fichero = actualPlaylist.get(position);
         actualTrack = new Track(fichero, fichero.getName(), "", getDuration(fichero.getPath()));
-        player.playMusica(actualTrack.getFichero().getPath());
+        indice = position;
+        player.playMusica(actualTrack.getFichero().getPath(), position);
         if(chrono == null) chrono = new Timer();
         chrono.scheduleAtFixedRate(taskChrono, 0, 1000);
     }
@@ -161,21 +181,23 @@ public class ControladorPlaylist {
         return (int) (h.total_ms((int) tn)/1000);
     }
 
-    public DefaultListModel addTracks(File[] files) {
-        
-        for (File file : files){
-            actualPlaylist.add(file);
-            urlActualPlaylist.add(file.getPath());
+
+    public void pauseTrack() {
+        player.pauseMusica();
+    }
+
+    public void clearTrackList() {
+        actualPlaylist.clear();
+        urlActualPlaylist.clear();
+    }
+    
+    public void reproducirSiguiente(){
+        stopTrack();
+        try{
+            playTrack(indice+1);
+        }catch(ArrayIndexOutOfBoundsException e){
+            playTrack(0);
         }
-        
-        DefaultListModel model = new DefaultListModel();
-        
-        for (File track : actualPlaylist) {
-            model.addElement(track.getName());
-        }
-            
-        return model;
-        
     }
 
     

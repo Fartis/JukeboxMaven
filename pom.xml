@@ -29,7 +29,12 @@
             <artifactId>tika-parsers</artifactId>
             <version>1.4</version>
         </dependency>
-
-
+        <!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/basicplayer -->
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>basicplayer</artifactId>
+            <version>3.0.0.0</version>
+        </dependency>
+        
     </dependencies>
 </project>

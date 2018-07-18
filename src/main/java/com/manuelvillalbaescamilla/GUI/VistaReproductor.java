@@ -6,9 +6,17 @@
 package com.manuelvillalbaescamilla.GUI;
 
 import com.manuelvillalbaescamilla.applifyingjukebox.ControladorPlaylist;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -24,9 +32,21 @@ public class VistaReproductor extends javax.swing.JFrame {
      * Creates new form VistaReproductor
      */
     public VistaReproductor() {
-        initComponents();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            initComponents();        
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaReproductor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(VistaReproductor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(VistaReproductor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(VistaReproductor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,6 +70,7 @@ public class VistaReproductor extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         trackList = new javax.swing.JList<>();
         addFolderButton = new javax.swing.JButton();
+        pauseButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,6 +91,11 @@ public class VistaReproductor extends javax.swing.JFrame {
         backButton.setLabel("<");
 
         nextButton.setLabel(">");
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextButtonActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -105,7 +131,7 @@ public class VistaReproductor extends javax.swing.JFrame {
                 .addComponent(titleLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(timeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(barraProgreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -124,12 +150,12 @@ public class VistaReproductor extends javax.swing.JFrame {
         });
 
         clearButton.setText("CLEAR LIST");
-
-        trackList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
         });
+
         jScrollPane1.setViewportView(trackList);
         trackList.getAccessibleContext().setAccessibleName("trackList");
 
@@ -140,32 +166,39 @@ public class VistaReproductor extends javax.swing.JFrame {
             }
         });
 
+        pauseButton.setText("PAUSE");
+        pauseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pauseButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(addButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(addFolderButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(backButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(playButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(stopButton)
-                                .addGap(77, 77, 77)
-                                .addComponent(nextButton)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(backButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(playButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(stopButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pauseButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nextButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addFolderButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                         .addComponent(clearButton))
                     .addComponent(jScrollPane1))
-                .addContainerGap())
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,7 +210,8 @@ public class VistaReproductor extends javax.swing.JFrame {
                     .addComponent(playButton)
                     .addComponent(stopButton)
                     .addComponent(backButton)
-                    .addComponent(nextButton))
+                    .addComponent(nextButton)
+                    .addComponent(pauseButton))
                 .addGap(5, 5, 5)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -251,6 +285,22 @@ public class VistaReproductor extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_addFolderButtonActionPerformed
 
+    private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
+        // TODO add your handling code here:
+        control.pauseTrack();
+    }//GEN-LAST:event_pauseButtonActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        // TODO add your handling code here:
+        control.clearTrackList();
+        trackList.setModel(new DefaultListModel());
+    }//GEN-LAST:event_clearButtonActionPerformed
+
+    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+        // TODO add your handling code here:
+        control.reproducirSiguiente();
+    }//GEN-LAST:event_nextButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -296,6 +346,7 @@ public class VistaReproductor extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
+    private javax.swing.JButton pauseButton;
     private javax.swing.JButton playButton;
     private javax.swing.JButton stopButton;
     private javax.swing.JLabel timeLabel;
@@ -311,4 +362,6 @@ public class VistaReproductor extends javax.swing.JFrame {
             titleLabel.setText(titleLabel.getText() + info);
         }
     }
+    
+    
 }
